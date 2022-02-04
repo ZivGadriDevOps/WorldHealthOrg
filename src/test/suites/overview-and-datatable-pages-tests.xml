@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="World Health Organization Tests" parallel="tests" thread-count="2">
+
+    <listeners>
+        <listener class-name="who.infra.testlisteners.SuiteModify"/>
+    </listeners>
+
+    <test name="Overview Page Tests">
+        <classes>
+            <class name="who.testcases.OverviewPageTests"/>
+        </classes>
+    </test>
+
+    <test name="Data Table Tests">
+        <classes>
+            <class name="who.testcases.DataTableTests"/>
+        </classes>
+    </test>
+
+</suite>

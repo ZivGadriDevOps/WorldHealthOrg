@@ -8,22 +8,25 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.Assert;
 import org.testng.ITestContext;
 import org.testng.ITestNGMethod;
-import org.testng.annotations.AfterMethod;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.*;
 import who.infra.core.driverfactory.DriverInit;
 import who.infra.testlisteners.TestResult;
 import who.infra.testlisteners.TestRetry;
 import who.infra.core.driverfactory.*;
+import who.infra.utils.TestHelper;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Listeners({TestResult.class})
 public abstract class TestBase {
 
     protected static Logger logger = LogManager.getLogger("tests");
+
+    protected static List<Process> processes = new ArrayList<>();
 
     public static int PAGE_LOAD_TIMEOUT = 60;
     public static int IMPLICIT_WAIT_TIMEOUT = 30;
@@ -39,6 +42,15 @@ public abstract class TestBase {
     protected RemoteWebDriver driver;
     protected abstract DriverType getDriverType();
 
+
+    @BeforeSuite(alwaysRun = true)
+    public void launchSeleniumGridHubAndNode() throws IOException {
+
+        logger.info("BeforeSuite: Starting Selenium Server Standalone hub and node...");
+        //runSeleniumGridHub();
+        //runSeleniumGridNode();
+
+    }
 
 
     @BeforeClass(alwaysRun = true)
@@ -114,6 +126,45 @@ public abstract class TestBase {
         logger.info("Browser window size: " + driver.manage().window().getSize().toString());
         driver.manage().timeouts().pageLoadTimeout(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
         driver.manage().timeouts().implicitlyWait(IMPLICIT_WAIT_TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    private static void runSeleniumGridHub() throws IOException {
+        try {
+            processes.add(Runtime.getRuntime().exec("cmd /c start \"\" startHub.bat", null,
+                    new File("startHub.bat")));
+
+        } catch (IOException exc) {
+            exc.printStackTrace();
+            Assert.fail("Failed to open 'startHub.bat' file. Quiting process.");
+        }
+    }
+
+    private static void runSeleniumGridNode() throws IOException {
+
+        try {
+            /*Runtime.getRuntime().exec("cmd /c start \"\" startNode.bat", null,
+                    new File("src\\test\\resources\\Selenium-Server-Standalone"));*/
+
+            processes.add(Runtime.getRuntime().exec("cmd /c start \"\" startNode.bat", null,
+                    new File("..\\..\\Automation\\Drivers")));
+
+            TestHelper.waitSeconds(10);
+        } catch (IOException exc) {
+            exc.printStackTrace();
+            Assert.fail("Failed to open 'startNode.bat' file. Quiting process.");
+        }
+    }
+
+    private static void closeSeleniumStandaloneServer() throws IOException {
+
+        try {
+            for (Process process : processes) {
+                process.destroy();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.info("Failed to close selenium standalone server...");
+        }
     }
 
 }
