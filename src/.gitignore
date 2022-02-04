@@ -1,0 +1,10 @@
+# Default ignored files
+target/
+.idea/
+*.iml
+.allure/
+allure-results/
+.gradle/
+build/
+out/
+logs/

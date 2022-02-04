@@ -1,0 +1,100 @@
+
+plugins {
+    id 'io.qameta.allure' version '2.8.1'
+    id 'java'
+    id 'idea'
+}
+
+group 'org.mobideo'
+version '1.0-SNAPSHOT'
+
+idea {
+    project {
+        languageLevel = '11'
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url "https://cloud.experitest.com/repo/"
+    }
+}
+
+wrapper {
+    gradleVersion = '6.2.2'
+    distributionType = Wrapper.DistributionType.ALL
+
+}
+
+def allureVersion = '2.13.2'
+
+allure {
+    version = allureVersion
+    autoconfigure = true
+    aspectjweaver = true
+    aspectjVersion = '1.8.10'
+}
+
+dependencies {
+    testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-remote-driver', version: '3.141.59'
+    testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-java', version: '3.141.59'
+    testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-api', version: '3.141.59'
+    testImplementation group: 'org.seleniumhq.selenium', name: 'selenium-support', version: '3.141.59'
+    testImplementation group: 'io.appium', name: 'java-client', version: '7.4.1'
+    testImplementation group: 'org.testng', name: 'testng', version: '7.4.0'
+    testImplementation group: 'io.qameta.allure', name: 'allure-testng', version: allureVersion
+    implementation group: 'com.microsoft.sqlserver', name: 'mssql-jdbc', version: '8.2.0.jre8'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.29'
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    implementation group: 'joda-time', name: 'joda-time', version: '2.9.9'
+    implementation group: 'com.opencsv', name: 'opencsv', version: '4.4'
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
+    implementation group: 'org.apache.poi', name: 'poi', version: '4.1.2'
+    implementation group: 'org.apache.poi', name: 'poi-ooxml', version: '4.1.2'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.6'
+    implementation group: 'com.sun.xml.ws', name: 'jaxws-rt', version: '3.0.0'
+    implementation group: 'com.konghq', name: 'unirest-java', version: '3.11.09'
+
+}
+
+tasks.withType(JavaExec) {
+    //forwarding system variables
+    systemProperties = System.getProperties()
+}
+
+tasks.withType(Test) {
+    //forwarding system variables
+    systemProperties = System.getProperties()
+    useTestNG() {
+        filter {
+            setFailOnNoMatchingTests(false)
+        }
+        testLogging.showStandardStreams = true
+        testLogging.showStackTraces = true
+        testLogging.exceptionFormat = 'full'
+        useDefaultListeners = true
+        //outputDirectory = file("$project.buildDir//testngOutput")
+    }
+}
+
+task runTests(type: Test) {
+    useTestNG() {
+    }
+}
+
+task apiHealthCheck(type: Test) {
+    useTestNG {
+        includeGroups System.getProperty('groups','')
+        if (project.hasProperty('core')) {
+            suites 'src/test/suites/core/api-healthcheck.xml'
+        }
+        if (project.hasProperty('sto')) {
+            suites 'src/test/suites/sto/api-healthcheck.xml'
+        }
+    }
+}
