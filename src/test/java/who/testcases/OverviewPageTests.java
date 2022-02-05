@@ -32,6 +32,7 @@ public class OverviewPageTests extends TestBase {
 
     }
 
+    @TestID(id = "3333")
     @Test(groups = {RunMode.SANITY, RunMode.OVERVIEW_PAGE}, description = "Test whether the number of deaths is bigger than 4,000,000")
     public void testNumberOfDeaths() {
 
@@ -44,6 +45,7 @@ public class OverviewPageTests extends TestBase {
         verifyTestedParameterNumberIsHigherThanAMinNumber(actualNumOfDeaths, minNumOfDeaths);
     }
 
+    @TestID(id = "4444")
     @Test(groups = {RunMode.SANITY, RunMode.OVERVIEW_PAGE}, description = "Test whether the number of confirmed cases is bigger than 100,000")
     public void testNumberOfConfirmedCases() {
 

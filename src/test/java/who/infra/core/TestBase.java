@@ -18,6 +18,10 @@ import who.infra.testlisteners.TestRetry;
 import who.infra.core.driverfactory.*;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 @Listeners({TestResult.class})
@@ -38,6 +42,12 @@ public abstract class TestBase {
 
     protected RemoteWebDriver driver;
     protected abstract DriverType getDriverType();
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface TestID {
+        String id() default "0";
+    }
 
 
     @BeforeClass(alwaysRun = true)

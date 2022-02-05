@@ -48,6 +48,7 @@ public class DataTableTests extends TestBase {
         verifyTestedParameterNumberIsHigherThanAnotherNumber(globalCases, UsaCases);
     }
 
+    @TestID(id = "1111")
     @Test(groups = {RunMode.REGRESSION, RunMode.DATA_TABLE_PAGE}, description = "Verify the number of cases cumulative in Global Latest is bigger than in yesterday")
     public void testNumberOfGlobalCasesTodayIsBiggerThanYesterday() {
 
@@ -66,6 +67,7 @@ public class DataTableTests extends TestBase {
     }
 
 
+    @TestID(id = "2222")
     @Step("Verify the number of tested parameter is larger than a minimum expected.")
     private void verifyTestedParameterNumberIsHigherThanAnotherNumber(String higherExpected, String lowerExpected) {
 
